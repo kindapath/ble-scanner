@@ -16,6 +16,9 @@ import {
   FlatList,
 } from 'react-native';
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['new NativeEventEmitter()']); // Ignore log notification by message
+
 import useBLE from './useBLE';
 
 export default function App() {
@@ -27,6 +30,7 @@ export default function App() {
   } = useBLE()
 
   const scanForDevices = async () => {
+
     const isPermissionsEnabeled = await requestPermissions()
     console.log(isPermissionsEnabeled);
     if (isPermissionsEnabeled) {
@@ -37,58 +41,81 @@ export default function App() {
 
   return (
     <View style={styles.mainBody}>
+      <StatusBar style="auto" />
       <View>
         <Text style={styles.headerTitle}>
           React Native BLE Manager
         </Text>
       </View>
 
-      {/* <FlatList
-        data={allDevices}
-        renderItem={({ name }) => (
+      <ScrollView style={styles.deviceList}>
+        {allDevices.map(({ name, id }) => (
           <View style={styles.item}>
-            <Text style={styles.itemTitle}>{name}</Text>
+            <Text style={styles.itemTitle}>name: {name === null ? 'Unknown device' : name}</Text>
+            <Text style={styles.itemTitle}>id: {id}</Text>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* <FlatList
+        style={styles.deviceList}
+        data={allDevices}
+        renderItem={({ name, id }) => (
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>name: {name === null ? 'Unknown device' : name}</Text>
+            <Text style={styles.itemTitle}>id: {id}</Text>
           </View>
         )}
-        keyExtractor={device => device.id}
+        keyExtractor={(device, index) => index}
       /> */}
 
       <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
         <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices</Text>
       </TouchableOpacity>
 
-      <StatusBar style="auto" />
     </View>
   );
 }
 const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   headerTitle: {
+    color: '#FFFFFF',
     textAlign: 'center',
     fontSize: 24,
     marginBottom: 24
   },
+  deviceList: {
+    padding: 0,
+    margin: 0,
+    width: '100%',
+  },
   item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
+    backgroundColor: '#0F4C75',
+    padding: 2,
     marginVertical: 8,
-    marginHorizontal: 16,
+    width: '100%',
   },
   itemTitle: {
-    fontSize: 32,
+    color: '#FFFFFF',
+    fontSize: 18,
+    padding: 3
   },
   mainBody: {
     justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
     height: windowHeight,
+    padding: 10,
+    paddingTop: 35,
+    backgroundColor: '#1B262C'
   },
   buttonStyle: {
     position: 'absolute',
     bottom: 5,
-    backgroundColor: '#307ecc',
+    backgroundColor: '#3282B8',
     borderWidth: 0,
     color: '#FFFFFF',
-    borderColor: '#307ecc',
+    borderColor: '#3282B8',
     height: 40,
     width: '100%',
     alignItems: 'center',
@@ -96,6 +123,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     marginTop: 15,
+    marginBottom: 20,
+
   },
   buttonTextStyle: {
     color: '#FFFFFF',

@@ -59,16 +59,15 @@ function useBLE() {
   }
 
   const scanForPeripherals = () => {
+    setAllDevices([])
     console.log('start');
     bleManager.startDeviceScan(null, null, (err, device) => {
       if (err) {
         console.log('error while scanning:');
       }
       if (device) {
-
         setAllDevices((prevState) => {
           if (!isDuplicateDevice(prevState, device)) {
-            console.log('name:', device.name, 'id:', device.id);
             return [...prevState, {
               name: device.name,
               id: device.id
@@ -81,9 +80,10 @@ function useBLE() {
 
     setTimeout(() => {
       bleManager.stopDeviceScan()
-
       console.log('stop scanning...');
-    }, 5000);
+      console.log('all discovered devices:', allDevices);
+
+    }, 3000);
   }
 
   return {
