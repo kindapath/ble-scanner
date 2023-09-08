@@ -11,15 +11,26 @@ function useBLE() {
   const bleManager = new BleManager()
   const [allDevices, setAllDevices] = useState([])
 
-  const requestAndroid31Permissions = async () => {
-    const bluetoothScanPermission = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-      {
-        title: "Scan permission",
-        message: "App requires Bluetooth Scanning",
-        buttonPositive: "OK"
-      }
-    )
+  const requestPermissions = async () => {
+    console.log('request');
+    // const bluetoothScanPermission = await PermissionsAndroid.request(
+    //   PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+    //   {
+    //     title: "Scan permission",
+    //     message: "App requires Bluetooth Scanning",
+    //     buttonPositive: "OK"
+    //   }
+    // )
+
+    // const bluetoothConnectPermission = await PermissionsAndroid.request(
+    //   PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+    //   {
+    //     title: "Fine Location permission",
+    //     message: "App requires Fine Location",
+    //     buttonPositive: "OK"
+    //   }
+    // )
+
     const bluetoothFineLocationPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
@@ -29,43 +40,50 @@ function useBLE() {
       }
     )
 
+    console.log('location:', bluetoothFineLocationPermission);
+    // console.log('scan:', bluetoothScanPermission);
+    // console.log('connect:', bluetoothConnectPermission);
+
     return (
-      bluetoothScanPermission === 'granted' &&
-      bluetoothFineLocationPermission === 'granted'
+      // bluetoothScanPermission === 'granted' &&
+      // bluetoothConnectPermission === 'granted' &&
+      // bluetoothFineLocationPermission === 'granted'
+      // bluetoothScanPermission === PermissionsAndroid.RESULTS.GRANTED &&
+      // bluetoothConnectPermission === PermissionsAndroid.RESULTS.GRANTED &&
+      bluetoothFineLocationPermission === PermissionsAndroid.RESULTS.GRANTED
     )
   }
 
-  const requestPermissions = async () => {
-    if (Platform.OS === 'android') {
-      if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: "Fine Location permission",
-            message: "App requires Fine Location",
-            buttonPositive: "OK"
-          }
-        )
-        return granted === PermissionsAndroid.RESULTS.GRANTED
-      }
-    } else {
-      const isAndroid31PermissionGranted = await requestAndroid31Permissions()
-      return isAndroid31PermissionGranted
-    }
+  const isDuplicateDevice = (devices, nextDevice) => {
+    devices.findIndex((device) => nextDevice.id === device.id) > -1
   }
 
   const scanForPeripherals = () => {
+    console.log('start');
     bleManager.startDeviceScan(null, null, (err, device) => {
       if (err) {
-        console.log(err);
+        console.log('error while scanning:');
       }
       if (device) {
-        console.log(device);
+
         setAllDevices((prevState) => {
-          return [...prevState, device]
+          if (!isDuplicateDevice(prevState, device)) {
+            console.log('name:', device.name, 'id:', device.id);
+            return [...prevState, {
+              name: device.name,
+              id: device.id
+            }]
+          }
         })
+
       }
     })
+
+    setTimeout(() => {
+      bleManager.stopDeviceScan()
+
+      console.log('stop scanning...');
+    }, 5000);
   }
 
   return {

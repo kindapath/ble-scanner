@@ -27,9 +27,10 @@ export default function App() {
   } = useBLE()
 
   const scanForDevices = async () => {
-    console.log('scanning...');
     const isPermissionsEnabeled = await requestPermissions()
+    console.log(isPermissionsEnabeled);
     if (isPermissionsEnabeled) {
+      console.log('scanning...');
       scanForPeripherals()
     }
   }
@@ -38,14 +39,22 @@ export default function App() {
     <View style={styles.mainBody}>
       <View>
         <Text style={styles.headerTitle}>
-          React Native BLE Manager Tutorial
+          React Native BLE Manager
         </Text>
       </View>
 
-      <Text>{allDevices}</Text>
+      {/* <FlatList
+        data={allDevices}
+        renderItem={({ name }) => (
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>{name}</Text>
+          </View>
+        )}
+        keyExtractor={device => device.id}
+      /> */}
 
       <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
-        <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices </Text>
+        <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices</Text>
       </TouchableOpacity>
 
       <StatusBar style="auto" />
@@ -59,21 +68,33 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 24
   },
+  item: {
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  itemTitle: {
+    fontSize: 32,
+  },
   mainBody: {
-    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     height: windowHeight,
   },
   buttonStyle: {
+    position: 'absolute',
+    bottom: 5,
     backgroundColor: '#307ecc',
     borderWidth: 0,
     color: '#FFFFFF',
     borderColor: '#307ecc',
     height: 40,
+    width: '100%',
     alignItems: 'center',
     borderRadius: 30,
-    marginLeft: 35,
-    marginRight: 35,
+    marginLeft: 10,
+    marginRight: 10,
     marginTop: 15,
   },
   buttonTextStyle: {
