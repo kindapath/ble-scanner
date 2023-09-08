@@ -1,61 +1,84 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  Text,
+  View,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  NativeModules,
+  useColorScheme,
+  TouchableOpacity,
+  NativeEventEmitter,
+  PermissionsAndroid,
+  FlatList,
+} from 'react-native';
+
+import useBLE from './useBLE';
 
 export default function App() {
 
-  const [devices, setDevices] = useState([
-    { name: 'iphone', id: 1 },
-    { name: 'luigi', id: 2 },
-    { name: 'shon', id: 3 },
-    { name: 'veras', id: 4 },
-    { name: 'poki', id: 5 },
-    { name: 'uas', id: 6 },
-    { name: 'open', id: 7 },
-    { name: 'laki', id: 8 },
-    { name: 'tor', id: 9 },
-    { name: 'pewer', id: 10 },
-  ])
+  const {
+    requestPermissions,
+    scanForPeripherals,
+    allDevices
+  } = useBLE()
+
+  const scanForDevices = async () => {
+    console.log('scanning...');
+    const isPermissionsEnabeled = await requestPermissions()
+    if (isPermissionsEnabeled) {
+      scanForPeripherals()
+    }
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>BLE Scanner</Text>
-      </View>
-
+    <View style={styles.mainBody}>
       <View>
-        <Button title='Сканировать' />
+        <Text style={styles.headerTitle}>
+          React Native BLE Manager Tutorial
+        </Text>
       </View>
 
-      <FlatList
-        keyExtractor={item => item.id}
-        data={devices}
-        renderItem={({ item }) => (
-          <Text style={styles.item}>{item.name}</Text>
-        )}
-      />
+      <Text>{allDevices}</Text>
+
+      <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
+        <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices </Text>
+      </TouchableOpacity>
+
       <StatusBar style="auto" />
     </View>
   );
 }
-
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   headerTitle: {
     textAlign: 'center',
     fontSize: 24,
     marginBottom: 24
   },
-  container: {
+  mainBody: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 40,
-    paddingHorizontal: 20
+    justifyContent: 'center',
+    height: windowHeight,
   },
-  item: {
-    marginTop: 24,
-    padding: 30,
-    backgroundColor: '#87CEFA',
-    fontSize: 24,
-    color: 'white'
+  buttonStyle: {
+    backgroundColor: '#307ecc',
+    borderWidth: 0,
+    color: '#FFFFFF',
+    borderColor: '#307ecc',
+    height: 40,
+    alignItems: 'center',
+    borderRadius: 30,
+    marginLeft: 35,
+    marginRight: 35,
+    marginTop: 15,
+  },
+  buttonTextStyle: {
+    color: '#FFFFFF',
+    paddingVertical: 10,
+    fontSize: 16,
   },
 });
