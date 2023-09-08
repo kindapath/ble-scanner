@@ -16,8 +16,6 @@ import {
   FlatList,
 } from 'react-native';
 
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['new NativeEventEmitter()']); // Ignore log notification by message
 
 import useBLE from './useBLE';
 
@@ -44,30 +42,18 @@ export default function App() {
       <StatusBar style="auto" />
       <View>
         <Text style={styles.headerTitle}>
-          React Native BLE Manager
+          Bluetooth Scanner
         </Text>
       </View>
 
       <ScrollView style={styles.deviceList}>
         {allDevices.map(({ name, id }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemTitle}>name: {name === null ? 'Unknown device' : name}</Text>
+          <View style={styles.item} key={id}>
+            <Text style={styles.itemTitle}>name: {name}</Text>
             <Text style={styles.itemTitle}>id: {id}</Text>
           </View>
         ))}
       </ScrollView>
-
-      {/* <FlatList
-        style={styles.deviceList}
-        data={allDevices}
-        renderItem={({ name, id }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemTitle}>name: {name === null ? 'Unknown device' : name}</Text>
-            <Text style={styles.itemTitle}>id: {id}</Text>
-          </View>
-        )}
-        keyExtractor={(device, index) => index}
-      /> */}
 
       <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
         <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices</Text>
@@ -91,14 +77,15 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: '#0F4C75',
-    padding: 2,
+    padding: 5,
     marginVertical: 8,
     width: '100%',
+    borderRadius: 10,
   },
   itemTitle: {
     color: '#FFFFFF',
     fontSize: 18,
-    padding: 3
+    padding: 5
   },
   mainBody: {
     justifyContent: 'center',

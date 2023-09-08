@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 
 import * as ExpoDevice from "expo-device"
@@ -55,11 +55,13 @@ function useBLE() {
   }
 
   const isDuplicateDevice = (devices, nextDevice) => {
-    devices.findIndex((device) => nextDevice.id === device.id) > -1
+    return devices.findIndex((device) => nextDevice.id === device.id) > -1
   }
 
   const scanForPeripherals = () => {
+
     setAllDevices([])
+
     console.log('start');
     bleManager.startDeviceScan(null, null, (err, device) => {
       if (err) {
@@ -69,10 +71,11 @@ function useBLE() {
         setAllDevices((prevState) => {
           if (!isDuplicateDevice(prevState, device)) {
             return [...prevState, {
-              name: device.name,
-              id: device.id
+              name: device.name || 'Unknown name',
+              id: device.id || 'Unknown ID'
             }]
           }
+          return prevState
         })
 
       }
@@ -81,8 +84,7 @@ function useBLE() {
     setTimeout(() => {
       bleManager.stopDeviceScan()
       console.log('stop scanning...');
-      console.log('all discovered devices:', allDevices);
-
+      console.log('ad', allDevices);
     }, 3000);
   }
 
