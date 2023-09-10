@@ -24,7 +24,8 @@ export default function App() {
   const {
     requestPermissions,
     scanForPeripherals,
-    allDevices
+    allDevices,
+    isScanning
   } = useBLE()
 
   const scanForDevices = async () => {
@@ -56,7 +57,7 @@ export default function App() {
       </ScrollView>
 
       <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
-        <Text style={styles.buttonTextStyle}>Scan Bluetooth Devices</Text>
+        <Text style={styles.buttonTextStyle}>{isScanning ? 'Scanning...' : 'Scan Bluetooth Devices'}</Text>
       </TouchableOpacity>
 
     </View>

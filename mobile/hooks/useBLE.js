@@ -11,6 +11,8 @@ import useApi from "./useApi";
 function useBLE() {
   const bleManager = new BleManager()
   const [allDevices, setAllDevices] = useState([])
+  const [isScanning, setIsScanning] = useState(false)
+
   const {
     sendDevices
   } = useApi()
@@ -83,6 +85,8 @@ function useBLE() {
   const scanForPeripherals = async () => {
     // clean devices list
     setAllDevices([])
+    setIsScanning(true)
+
 
     // check BlE state
     const bleOn = await isBleOn()
@@ -126,6 +130,7 @@ function useBLE() {
 
     setTimeout(() => {
       bleManager.stopDeviceScan()
+      setIsScanning(false)
       sendDevices(allDevices)
         .then(res => console.log(res))
         .catch((err) => console.log(err))
@@ -138,7 +143,8 @@ function useBLE() {
   return {
     scanForPeripherals,
     requestPermissions,
-    allDevices
+    allDevices,
+    isScanning
   }
 }
 
