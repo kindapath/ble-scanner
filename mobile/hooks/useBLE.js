@@ -6,10 +6,15 @@ import * as ExpoDevice from "expo-device"
 import {
   BleManager
 } from "react-native-ble-plx";
+import useApi from "./useApi";
 
 function useBLE() {
   const bleManager = new BleManager()
   const [allDevices, setAllDevices] = useState([])
+  const {
+    sendDevices
+  } = useApi()
+
 
   const requestPermissions = async () => {
     console.log('request');
@@ -58,18 +63,54 @@ function useBLE() {
     return devices.findIndex((device) => nextDevice.id === device.id) > -1
   }
 
-  const scanForPeripherals = () => {
+  const isBleOn = async () => {
 
+    let bleOn = false
+
+    // check the state of Bluetooth
+    const bleState = await bleManager.state()
+
+    if (bleState === 'PoweredOff') {
+      bleOn = false
+    } else if (bleState === 'PoweredOn') {
+      bleOn = true
+    }
+
+    return bleOn
+  }
+
+  // scan for nearby devices
+  const scanForPeripherals = async () => {
+    // clean devices list
     setAllDevices([])
 
+    // check BlE state
+    const bleOn = await isBleOn()
+    console.log(bleOn);
+
+    // if ble is off
+    if (!bleOn) {
+      // enable BLE
+      await bleManager.enable()
+    }
+
     console.log('start');
+
+    // start devices scanning
     bleManager.startDeviceScan(null, null, (err, device) => {
       if (err) {
         console.log('error while scanning:');
       }
+
+      // if device is found
       if (device) {
+
         setAllDevices((prevState) => {
+
+          // and is not duplicate
           if (!isDuplicateDevice(prevState, device)) {
+
+            // add to allDevices state
             return [...prevState, {
               name: device.name || 'Unknown name',
               id: device.id || 'Unknown ID'
@@ -81,11 +122,17 @@ function useBLE() {
       }
     })
 
+
+
     setTimeout(() => {
       bleManager.stopDeviceScan()
+      sendDevices(allDevices)
+        .then(res => console.log(res))
+        .catch((err) => console.log(err))
+      // .catch(err => console.log(err))
       console.log('stop scanning...');
       console.log('ad', allDevices);
-    }, 3000);
+    }, 15000);
   }
 
   return {

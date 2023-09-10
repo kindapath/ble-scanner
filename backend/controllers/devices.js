@@ -1,6 +1,6 @@
 module.exports.logDevices = (req, res) => {
   try {
-    const allDevices = req.body
+    const allDevices = req.body.devices
 
     const namesExist = allDevices.every((device) => device.name)
     allDevices.forEach(device => {

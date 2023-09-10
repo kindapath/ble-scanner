@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 
 
-import useBLE from './useBLE';
+import useBLE from './hooks/useBLE';
 
 export default function App() {
 
