@@ -1,7 +1,7 @@
 function useApi() {
 
   const apiData = {
-    baseUrl: 'http://46.22.56.22',
+    baseUrl: 'https://45.91.8.244:3000/',
     headers: {
       'Content-Type': 'application/json'
     }
@@ -18,15 +18,15 @@ function useApi() {
 
   const sendDevices = async (devices) => {
     console.log('send');
-    const res = await fetch(`${apiData.baseUrl}/`, {
-      method: 'POST',
+    const res = await fetch(`${apiData.baseUrl}`, {
+      method: 'GET',
       headers: apiData.headers,
       body: {
         devices
       }
     })
 
-    return res
+    return checkResponse(res)
   }
 
   return {

@@ -1,27 +1,29 @@
 module.exports.logDevices = (req, res) => {
-  try {
-    const allDevices = req.body.devices
+  const allDevices = req.body.devices
 
-    const namesExist = allDevices.every((device) => device.name)
+  try {
+
+    const nameAndIdExist = allDevices.every((device) => device.name)
     allDevices.forEach(device => {
-      if (namesExist) {
-        console.log(device.name, '- device is available for BLE connection');
-        res
-          .status(200)
-          .send(allDevices)
+      if (nameAndIdExist) {
+        console.log('name:', device.name, 'id:', device.id, '- device is available for BLE connection');
       }
       else {
         throw Error('One or more devices dont have a name')
       }
     });
 
+    res
+      .status(200)
+      .send(allDevices)
+
   } catch (error) {
     console.log(error.message);
     res
+      .status(403)
       .send({
         error: error.message
       })
-      .status(500)
   }
 
 }

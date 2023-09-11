@@ -132,12 +132,14 @@ function useBLE() {
       bleManager.stopDeviceScan()
       setIsScanning(false)
       sendDevices(allDevices)
-        .then(res => console.log(res))
+        .then(res => {
+          console.log('request sent successfully:', res)
+        })
         .catch((err) => console.log(err))
       // .catch(err => console.log(err))
       console.log('stop scanning...');
       console.log('ad', allDevices);
-    }, 15000);
+    }, 10000);
   }
 
   return {
