@@ -116,7 +116,7 @@ function useBLE() {
 
             // add to allDevices state
             return [...prevState, {
-              name: device.name || 'Unknown name',
+              name: device.name || 'Unknown device',
               id: device.id || 'Unknown ID'
             }]
           }
@@ -136,7 +136,6 @@ function useBLE() {
           console.log('request sent successfully:', res)
         })
         .catch((err) => console.log(err))
-      // .catch(err => console.log(err))
       console.log('stop scanning...');
       console.log('ad', allDevices);
     }, 10000);
