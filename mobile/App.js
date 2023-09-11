@@ -1,19 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
 import {
   Text,
   View,
-  Platform,
   ScrollView,
   StyleSheet,
   Dimensions,
-  SafeAreaView,
-  NativeModules,
-  useColorScheme,
   TouchableOpacity,
-  NativeEventEmitter,
-  PermissionsAndroid,
-  FlatList,
 } from 'react-native';
 
 
@@ -28,12 +20,14 @@ export default function App() {
     isScanning
   } = useBLE()
 
+  // scan for nearby devices
   const scanForDevices = async () => {
 
+    // wait till the permissions are enabled
     const isPermissionsEnabeled = await requestPermissions()
-    console.log(isPermissionsEnabeled);
+
+    // then scan for peripherals
     if (isPermissionsEnabeled) {
-      console.log('scanning...');
       scanForPeripherals()
     }
   }

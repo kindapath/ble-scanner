@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
-
-import * as ExpoDevice from "expo-device"
 
 import {
   BleManager
@@ -18,26 +16,11 @@ function useBLE() {
   } = useApi()
 
 
+
+  // request permissions
   const requestPermissions = async () => {
-    console.log('request');
-    // const bluetoothScanPermission = await PermissionsAndroid.request(
-    //   PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-    //   {
-    //     title: "Scan permission",
-    //     message: "App requires Bluetooth Scanning",
-    //     buttonPositive: "OK"
-    //   }
-    // )
 
-    // const bluetoothConnectPermission = await PermissionsAndroid.request(
-    //   PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-    //   {
-    //     title: "Fine Location permission",
-    //     message: "App requires Fine Location",
-    //     buttonPositive: "OK"
-    //   }
-    // )
-
+    // request fine location permission
     const bluetoothFineLocationPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
@@ -47,21 +30,15 @@ function useBLE() {
       }
     )
 
-    console.log('location:', bluetoothFineLocationPermission);
-    // console.log('scan:', bluetoothScanPermission);
-    // console.log('connect:', bluetoothConnectPermission);
-
     return (
-      // bluetoothScanPermission === 'granted' &&
-      // bluetoothConnectPermission === 'granted' &&
-      // bluetoothFineLocationPermission === 'granted'
-      // bluetoothScanPermission === PermissionsAndroid.RESULTS.GRANTED &&
-      // bluetoothConnectPermission === PermissionsAndroid.RESULTS.GRANTED &&
       bluetoothFineLocationPermission === PermissionsAndroid.RESULTS.GRANTED
     )
   }
 
+  // checking for duplicates
   const isDuplicateDevice = (devices, nextDevice) => {
+
+    // returns index of the first element in the array that passes the test. Otherwise, -1.
     return devices.findIndex((device) => nextDevice.id === device.id) > -1
   }
 
@@ -90,15 +67,12 @@ function useBLE() {
 
     // check BlE state
     const bleOn = await isBleOn()
-    console.log(bleOn);
 
     // if ble is off
     if (!bleOn) {
       // enable BLE
       await bleManager.enable()
     }
-
-    console.log('start');
 
     // start devices scanning
     bleManager.startDeviceScan(null, null, (err, device) => {
@@ -127,17 +101,19 @@ function useBLE() {
     })
 
 
-
+    // in 10 secs after scan start
     setTimeout(() => {
+      // stop scanning
       bleManager.stopDeviceScan()
+
       setIsScanning(false)
+
+      // send request to the server
       sendDevices(allDevices)
         .then(res => {
           console.log('request sent successfully:', res)
         })
         .catch((err) => console.log(err))
-      console.log('stop scanning...');
-      console.log('ad', allDevices);
     }, 10000);
   }
 

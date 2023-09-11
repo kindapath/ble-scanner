@@ -1,12 +1,13 @@
 function useApi() {
 
   const apiData = {
-    baseUrl: 'http://45.91.8.244:3000/',
+    baseUrl: 'http://45.91.8.244/',
     headers: {
       'Content-Type': 'application/json'
     }
   }
 
+  // check the response from the server
   const checkResponse = (res) => {
 
     if (res.ok) {
@@ -16,9 +17,8 @@ function useApi() {
 
   }
 
+  // send POST request to the server with array of found devices
   const sendDevices = async (devices) => {
-    console.log('devices', devices);
-    console.log('send');
     const res = await fetch(`${apiData.baseUrl}`, {
       method: 'POST',
       headers: apiData.headers,
