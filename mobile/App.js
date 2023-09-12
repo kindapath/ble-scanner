@@ -35,10 +35,13 @@ export default function App() {
   return (
     <View style={styles.mainBody}>
       <StatusBar style="auto" />
-      <View>
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>
           Bluetooth Scanner
         </Text>
+        <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
+          <Text style={styles.buttonTextStyle}>{isScanning ? 'Scanning...' : 'Scan Bluetooth Devices'}</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.deviceList}>
@@ -50,15 +53,16 @@ export default function App() {
         ))}
       </ScrollView>
 
-      <TouchableOpacity activeOpacity={0.5} style={styles.buttonStyle} onPress={scanForDevices} >
-        <Text style={styles.buttonTextStyle}>{isScanning ? 'Scanning...' : 'Scan Bluetooth Devices'}</Text>
-      </TouchableOpacity>
+
 
     </View>
   );
 }
 const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
+  header: {
+    width: '100%'
+  },
   headerTitle: {
     color: '#FFFFFF',
     textAlign: 'center',
@@ -92,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1B262C'
   },
   buttonStyle: {
-    position: 'absolute',
+    // position: 'absolute',
     bottom: 5,
     backgroundColor: '#3282B8',
     borderWidth: 0,
@@ -102,11 +106,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     borderRadius: 30,
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 15,
-    marginBottom: 20,
-
+    marginBottom: 10,
   },
   buttonTextStyle: {
     color: '#FFFFFF',
