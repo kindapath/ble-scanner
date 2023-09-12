@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 
 import {
@@ -10,6 +10,7 @@ function useBLE() {
   const bleManager = new BleManager()
   const [allDevices, setAllDevices] = useState([])
   const [isScanning, setIsScanning] = useState(false)
+  const [sendingRequest, setSendingRequest] = useState(false)
 
   const {
     sendDevices
@@ -107,6 +108,15 @@ function useBLE() {
       bleManager.stopDeviceScan()
 
       setIsScanning(false)
+      setSendingRequest(true)
+
+    }, 10000);
+  }
+
+  useEffect(() => {
+
+    if (sendingRequest === true) {
+      console.log('req sent');
 
       // send request to the server
       sendDevices(allDevices)
@@ -114,8 +124,12 @@ function useBLE() {
           console.log('request sent successfully:', res)
         })
         .catch((err) => console.log(err))
-    }, 10000);
-  }
+
+      setSendingRequest(false)
+
+    }
+
+  }, [sendingRequest])
 
   return {
     scanForPeripherals,
