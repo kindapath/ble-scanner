@@ -107,16 +107,20 @@ function useBLE() {
       // stop scanning
       bleManager.stopDeviceScan()
 
+      // change isScanning state
       setIsScanning(false)
+
+      // change the state of sendingRequest
+      // useEffect hook is called
       setSendingRequest(true)
 
     }, 10000);
   }
 
+  // if sendingRequest state is true we sent request to the server
   useEffect(() => {
 
     if (sendingRequest === true) {
-      console.log('req sent');
 
       // send request to the server
       sendDevices(allDevices)
